@@ -1,8 +1,6 @@
 import { useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import RevealText from "@/shared/effects/RevealText";
-import { useProjects } from "@/hooks/useProjects";
-import type { ProjectCard } from "@/types/project";
 
 const ARROW_SVG = (
     <svg width="14" height="13" viewBox="0 0 14 13" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
@@ -11,60 +9,125 @@ const ARROW_SVG = (
 );
 
 const PLAY_ICON = (
-    <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
         <path d="M8 5v14l11-7z" />
     </svg>
 );
 
-function VideoItem({ item }: { item: ProjectCard }) {
+interface WorkItem {
+    title: string;
+    category: string;
+    tags: string[];
+    tagline: string;
+    videoUrl: string;
+    posterUrl: string;
+    projectUrl: string;
+    slug: string;
+}
+
+const WORK_ITEMS: WorkItem[] = [
+    {
+        title: "Krevix",
+        category: "Motion Design",
+        tags: ["Motion Graphics", "Brand Identity", "Video"],
+        tagline: "Brand motion package and visual identity for a creative agency.",
+        videoUrl: "https://res.cloudinary.com/dt93sahp2/video/upload/v1782744665/Krevix_gmv1he.mp4",
+        posterUrl: "https://res.cloudinary.com/dt93sahp2/video/upload/so_0/v1782744665/Krevix_gmv1he.jpg",
+        projectUrl: "https://krevix.agency",
+        slug: "krevix",
+    },
+    {
+        title: "Health AI",
+        category: "AI Content",
+        tags: ["AI Content", "Motion Graphics", "Product Video"],
+        tagline: "AI-driven content and product video for a health technology platform.",
+        videoUrl: "https://res.cloudinary.com/dt93sahp2/video/upload/v1782744663/HealthAi_rnbyx4.mp4",
+        posterUrl: "https://res.cloudinary.com/dt93sahp2/video/upload/so_0/v1782744663/HealthAi_rnbyx4.jpg",
+        projectUrl: "https://health.ai",
+        slug: "health-ai",
+    },
+    {
+        title: "Cursa — Courses",
+        category: "UGC Content",
+        tags: ["UGC Content", "2D Animation", "Social Ads"],
+        tagline: "UGC-style video content and animated explainers for an online learning platform.",
+        videoUrl: "https://res.cloudinary.com/dt93sahp2/video/upload/v1782744656/Courses_rg79hw.mov",
+        posterUrl: "https://res.cloudinary.com/dt93sahp2/video/upload/so_0/v1782744656/Courses_rg79hw.jpg",
+        projectUrl: "https://cursa.app/en",
+        slug: "cursa-courses",
+    },
+    {
+        title: "Finans Mobile App",
+        category: "Motion Design",
+        tags: ["Motion Graphics", "App Demo", "Product Video"],
+        tagline: "Motion graphics and product demo video for a fintech mobile application.",
+        videoUrl: "https://res.cloudinary.com/dt93sahp2/video/upload/v1782744670/Finans_q49edg.mp4",
+        posterUrl: "https://res.cloudinary.com/dt93sahp2/video/upload/so_0/v1782744670/Finans_q49edg.jpg",
+        projectUrl: "https://fiscal.ai",
+        slug: "finans-mobile-app",
+    },
+    {
+        title: "Octave — Project Management",
+        category: "Motion Design",
+        tags: ["Motion Graphics", "SaaS Video", "Brand Film"],
+        tagline: "Brand film and motion content for a project management SaaS product.",
+        videoUrl: "https://res.cloudinary.com/dt93sahp2/video/upload/v1782744670/SkyAI50_lmh5q1.mp4",
+        posterUrl: "https://res.cloudinary.com/dt93sahp2/video/upload/so_0/v1782744670/SkyAI50_lmh5q1.jpg",
+        projectUrl: "https://www.octave.com",
+        slug: "octave-project-management",
+    },
+    {
+        title: "Optima — Ecommerce Brand",
+        category: "Meta Ads",
+        tags: ["Meta Ads", "UGC Content", "Ecommerce"],
+        tagline: "Meta ad creatives and UGC content for a premium ecommerce brand.",
+        videoUrl: "https://res.cloudinary.com/dt93sahp2/video/upload/v1782744663/Optima_t54j07.mp4",
+        posterUrl: "https://res.cloudinary.com/dt93sahp2/video/upload/so_0/v1782744663/Optima_t54j07.jpg",
+        projectUrl: "https://optimacotton.com",
+        slug: "optima-ecommerce",
+    },
+    {
+        title: "CryptoVerse Consultancy",
+        category: "Motion Design",
+        tags: ["Motion Graphics", "Brand Video", "Consultancy"],
+        tagline: "Visual identity and motion package for a blockchain consultancy firm.",
+        videoUrl: "https://res.cloudinary.com/dt93sahp2/video/upload/v1782744663/CryptonVerse_dmntpn.mp4",
+        posterUrl: "https://res.cloudinary.com/dt93sahp2/video/upload/so_0/v1782744663/CryptonVerse_dmntpn.jpg",
+        projectUrl: "https://www.cryptoverselawyers.io",
+        slug: "cryptoverse-consultancy",
+    },
+];
+
+function VideoItem({ item }: { item: WorkItem }) {
     const videoRef = useRef<HTMLVideoElement>(null);
     const [playing, setPlaying] = useState(false);
 
     function handlePlay() {
         const vid = videoRef.current;
         if (!vid) return;
-        vid.play().catch(() => {/* autoplay blocked — fine */});
+        vid.play().catch(() => {/* blocked */});
         setPlaying(true);
     }
 
-    function handleVideoEnd() { setPlaying(false); }
-    function handleVideoPause() { setPlaying(false); }
-
-    if (!item.hover_video_url) {
-        return (
-            <div className="mg-portfolio-thumb anim-zoomin not-hide-cursor">
-                <Link className="cursor-hide" to={`/portfolio/${item.slug}`}>
-                    <img
-                        data-speed=".8"
-                        className="w-100"
-                        src={item.thumbnail_url}
-                        alt={item.title}
-                        width={800}
-                        height={520}
-                        loading="lazy"
-                    />
-                    <span className="sec-4-home-11__thumb-title changeless" aria-hidden="true">
-                        {item.category}
-                    </span>
-                </Link>
-            </div>
-        );
-    }
+    function handleStop() { setPlaying(false); }
 
     return (
-        <div className="mg-portfolio-thumb anim-zoomin not-hide-cursor" style={{ position: "relative", overflow: "hidden" }}>
+        <div
+            className="mg-portfolio-thumb anim-zoomin not-hide-cursor"
+            style={{ position: "relative", overflow: "hidden" }}
+        >
             <video
                 ref={videoRef}
                 className="w-100"
-                src={item.hover_video_url}
-                poster={item.thumbnail_url}
-                onEnded={handleVideoEnd}
-                onPause={handleVideoPause}
+                src={item.videoUrl}
+                poster={item.posterUrl}
+                onEnded={handleStop}
+                onPause={handleStop}
                 playsInline
                 style={{ display: "block", width: "100%", height: "auto" }}
             />
 
-            {/* Play overlay — visible only when not playing */}
+            {/* Frosted-glass play button — hidden while playing */}
             {!playing && (
                 <button
                     type="button"
@@ -78,7 +141,7 @@ function VideoItem({ item }: { item: ProjectCard }) {
                         display: "flex",
                         alignItems: "center",
                         justifyContent: "center",
-                        background: "rgba(0,0,0,0.28)",
+                        background: "rgba(0,0,0,0.30)",
                         border: "none",
                         cursor: "pointer",
                         padding: 0,
@@ -86,18 +149,17 @@ function VideoItem({ item }: { item: ProjectCard }) {
                 >
                     <span
                         style={{
-                            width: 68,
-                            height: 68,
+                            width: 72,
+                            height: 72,
                             borderRadius: "50%",
-                            background: "rgba(255,255,255,0.12)",
-                            backdropFilter: "blur(8px)",
-                            WebkitBackdropFilter: "blur(8px)",
+                            background: "rgba(255,255,255,0.13)",
+                            backdropFilter: "blur(10px)",
+                            WebkitBackdropFilter: "blur(10px)",
                             border: "1.5px solid rgba(255,255,255,0.45)",
                             display: "flex",
                             alignItems: "center",
                             justifyContent: "center",
                             color: "#fff",
-                            transition: "background 0.2s",
                         }}
                     >
                         {PLAY_ICON}
@@ -113,8 +175,6 @@ function VideoItem({ item }: { item: ProjectCard }) {
 }
 
 export default function Section4() {
-    const { projects, loading } = useProjects();
-
     return (
         <section className="sec-4-home-11" id="home-11-sec-4" aria-label="Featured works">
             <div className="sec-4-home-11__container">
@@ -147,13 +207,9 @@ export default function Section4() {
                 </header>
 
                 <div className="sec-4-home-11__list mt-5">
-                    {loading && (
-                        <p className="neutral-500 fz-font-lg py-4">Loading projects…</p>
-                    )}
-
-                    {projects.map((item, idx) => (
+                    {WORK_ITEMS.map((item, idx) => (
                         <div
-                            key={item.id ?? idx}
+                            key={idx}
                             className="mg-portfolio-item anim-zoomin-wrap sec-4-home-11__loop-item mb-55"
                             data-category={item.category}
                         >
@@ -162,19 +218,22 @@ export default function Section4() {
                             <div className="mg-portfolio-content cs-portfolio-content d-flex align-items-center flex-wrap flex-md-nowrap justify-content-between">
                                 <div className="w-md-75">
                                     <h3 className="h5 cs-portfolio-title at-title-anim fix mr-20 at-ff-sequel-semi-bold">
-                                        <Link to={`/portfolio/${item.slug}`} className="at-title-text">
+                                        <a
+                                            href={item.projectUrl}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            className="at-title-text"
+                                        >
                                             {item.title}
-                                        </Link>
+                                        </a>
                                     </h3>
-                                    {item.tagline && (
-                                        <p className="fz-font-lg neutral-500">{item.tagline}</p>
-                                    )}
+                                    <p className="fz-font-lg neutral-500">{item.tagline}</p>
                                 </div>
                                 <div className="cs-portfolio-tag">
                                     <ul className="d-flex justify-content-md-end flex-wrap text-nowrap">
-                                        {(item.tags ?? []).map((tag) => (
+                                        {item.tags.map((tag) => (
                                             <li key={tag}>
-                                                <Link to="#">{tag}</Link>
+                                                <span>{tag}</span>
                                             </li>
                                         ))}
                                     </ul>
