@@ -1,4 +1,3 @@
-import { useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import RevealText from "@/shared/effects/RevealText";
 
@@ -8,20 +7,12 @@ const ARROW_SVG = (
     </svg>
 );
 
-const PLAY_ICON = (
-    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-        <path d="M8 5v14l11-7z" />
-    </svg>
-);
-
 interface WorkItem {
     title: string;
     category: string;
     tags: string[];
     tagline: string;
     videoUrl: string;
-    posterUrl: string;
-    projectUrl: string;
     slug: string;
 }
 
@@ -32,8 +23,6 @@ const WORK_ITEMS: WorkItem[] = [
         tags: ["Motion Graphics", "Brand Identity", "Video"],
         tagline: "Brand motion package and visual identity for a creative agency.",
         videoUrl: "https://res.cloudinary.com/dt93sahp2/video/upload/v1782744665/Krevix_gmv1he.mp4",
-        posterUrl: "https://res.cloudinary.com/dt93sahp2/video/upload/so_0/v1782744665/Krevix_gmv1he.jpg",
-        projectUrl: "https://krevix.agency",
         slug: "krevix",
     },
     {
@@ -42,8 +31,6 @@ const WORK_ITEMS: WorkItem[] = [
         tags: ["AI Content", "Motion Graphics", "Product Video"],
         tagline: "AI-driven content and product video for a health technology platform.",
         videoUrl: "https://res.cloudinary.com/dt93sahp2/video/upload/v1782744663/HealthAi_rnbyx4.mp4",
-        posterUrl: "https://res.cloudinary.com/dt93sahp2/video/upload/so_0/v1782744663/HealthAi_rnbyx4.jpg",
-        projectUrl: "https://health.ai",
         slug: "health-ai",
     },
     {
@@ -52,8 +39,6 @@ const WORK_ITEMS: WorkItem[] = [
         tags: ["UGC Content", "2D Animation", "Social Ads"],
         tagline: "UGC-style video content and animated explainers for an online learning platform.",
         videoUrl: "https://res.cloudinary.com/dt93sahp2/video/upload/v1782744656/Courses_rg79hw.mov",
-        posterUrl: "https://res.cloudinary.com/dt93sahp2/video/upload/so_0/v1782744656/Courses_rg79hw.jpg",
-        projectUrl: "https://cursa.app/en",
         slug: "cursa-courses",
     },
     {
@@ -62,8 +47,6 @@ const WORK_ITEMS: WorkItem[] = [
         tags: ["Motion Graphics", "App Demo", "Product Video"],
         tagline: "Motion graphics and product demo video for a fintech mobile application.",
         videoUrl: "https://res.cloudinary.com/dt93sahp2/video/upload/v1782744670/Finans_q49edg.mp4",
-        posterUrl: "https://res.cloudinary.com/dt93sahp2/video/upload/so_0/v1782744670/Finans_q49edg.jpg",
-        projectUrl: "https://fiscal.ai",
         slug: "finans-mobile-app",
     },
     {
@@ -72,8 +55,6 @@ const WORK_ITEMS: WorkItem[] = [
         tags: ["Motion Graphics", "SaaS Video", "Brand Film"],
         tagline: "Brand film and motion content for a project management SaaS product.",
         videoUrl: "https://res.cloudinary.com/dt93sahp2/video/upload/v1782744670/SkyAI50_lmh5q1.mp4",
-        posterUrl: "https://res.cloudinary.com/dt93sahp2/video/upload/so_0/v1782744670/SkyAI50_lmh5q1.jpg",
-        projectUrl: "https://www.octave.com",
         slug: "octave-project-management",
     },
     {
@@ -82,8 +63,6 @@ const WORK_ITEMS: WorkItem[] = [
         tags: ["Meta Ads", "UGC Content", "Ecommerce"],
         tagline: "Meta ad creatives and UGC content for a premium ecommerce brand.",
         videoUrl: "https://res.cloudinary.com/dt93sahp2/video/upload/v1782744663/Optima_t54j07.mp4",
-        posterUrl: "https://res.cloudinary.com/dt93sahp2/video/upload/so_0/v1782744663/Optima_t54j07.jpg",
-        projectUrl: "https://optimacotton.com",
         slug: "optima-ecommerce",
     },
     {
@@ -92,87 +71,9 @@ const WORK_ITEMS: WorkItem[] = [
         tags: ["Motion Graphics", "Brand Video", "Consultancy"],
         tagline: "Visual identity and motion package for a blockchain consultancy firm.",
         videoUrl: "https://res.cloudinary.com/dt93sahp2/video/upload/v1782744663/CryptonVerse_dmntpn.mp4",
-        posterUrl: "https://res.cloudinary.com/dt93sahp2/video/upload/so_0/v1782744663/CryptonVerse_dmntpn.jpg",
-        projectUrl: "https://www.cryptoverselawyers.io",
         slug: "cryptoverse-consultancy",
     },
 ];
-
-function VideoItem({ item }: { item: WorkItem }) {
-    const videoRef = useRef<HTMLVideoElement>(null);
-    const [playing, setPlaying] = useState(false);
-
-    function handlePlay() {
-        const vid = videoRef.current;
-        if (!vid) return;
-        vid.play().catch(() => {/* blocked */});
-        setPlaying(true);
-    }
-
-    function handleStop() { setPlaying(false); }
-
-    return (
-        <div
-            className="mg-portfolio-thumb anim-zoomin not-hide-cursor"
-            style={{ position: "relative", overflow: "hidden" }}
-        >
-            <video
-                ref={videoRef}
-                className="w-100"
-                src={item.videoUrl}
-                poster={item.posterUrl}
-                onEnded={handleStop}
-                onPause={handleStop}
-                playsInline
-                style={{ display: "block", width: "100%", height: "auto" }}
-            />
-
-            {/* Frosted-glass play button — hidden while playing */}
-            {!playing && (
-                <button
-                    type="button"
-                    onClick={handlePlay}
-                    aria-label={`Play ${item.title}`}
-                    style={{
-                        position: "absolute",
-                        inset: 0,
-                        width: "100%",
-                        height: "100%",
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "center",
-                        background: "rgba(0,0,0,0.30)",
-                        border: "none",
-                        cursor: "pointer",
-                        padding: 0,
-                    }}
-                >
-                    <span
-                        style={{
-                            width: 72,
-                            height: 72,
-                            borderRadius: "50%",
-                            background: "rgba(255,255,255,0.13)",
-                            backdropFilter: "blur(10px)",
-                            WebkitBackdropFilter: "blur(10px)",
-                            border: "1.5px solid rgba(255,255,255,0.45)",
-                            display: "flex",
-                            alignItems: "center",
-                            justifyContent: "center",
-                            color: "#fff",
-                        }}
-                    >
-                        {PLAY_ICON}
-                    </span>
-                </button>
-            )}
-
-            <span className="sec-4-home-11__thumb-title changeless" aria-hidden="true">
-                {item.category}
-            </span>
-        </div>
-    );
-}
 
 export default function Section4() {
     return (
@@ -213,28 +114,36 @@ export default function Section4() {
                             className="mg-portfolio-item anim-zoomin-wrap sec-4-home-11__loop-item mb-55"
                             data-category={item.category}
                         >
-                            <VideoItem item={item} />
+                            <div className="mg-portfolio-thumb anim-zoomin not-hide-cursor" style={{ position: "relative", overflow: "hidden" }}>
+                                <Link to={`/portfolio/${item.slug}`} className="cursor-hide d-block" tabIndex={-1} aria-hidden="true">
+                                    <video
+                                        className="w-100"
+                                        src={item.videoUrl}
+                                        autoPlay
+                                        muted
+                                        loop
+                                        playsInline
+                                        style={{ display: "block", width: "100%", height: "auto", pointerEvents: "none" }}
+                                    />
+                                </Link>
+                                <span className="sec-4-home-11__thumb-title changeless" aria-hidden="true">
+                                    {item.category}
+                                </span>
+                            </div>
 
                             <div className="mg-portfolio-content cs-portfolio-content d-flex align-items-center flex-wrap flex-md-nowrap justify-content-between">
                                 <div className="w-md-75">
                                     <h3 className="h5 cs-portfolio-title at-title-anim fix mr-20 at-ff-sequel-semi-bold">
-                                        <a
-                                            href={item.projectUrl}
-                                            target="_blank"
-                                            rel="noopener noreferrer"
-                                            className="at-title-text"
-                                        >
+                                        <Link to={`/portfolio/${item.slug}`} className="at-title-text">
                                             {item.title}
-                                        </a>
+                                        </Link>
                                     </h3>
                                     <p className="fz-font-lg neutral-500">{item.tagline}</p>
                                 </div>
                                 <div className="cs-portfolio-tag">
                                     <ul className="d-flex justify-content-md-end flex-wrap text-nowrap">
                                         {item.tags.map((tag) => (
-                                            <li key={tag}>
-                                                <span>{tag}</span>
-                                            </li>
+                                            <li key={tag}><span>{tag}</span></li>
                                         ))}
                                     </ul>
                                 </div>

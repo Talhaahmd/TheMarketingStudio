@@ -1,125 +1,56 @@
-import { useEffect, useState } from 'react'
-import { supabase } from '@/lib/supabase'
+import { useMemo } from 'react'
 import type { Project, ProjectCard } from '@/types/project'
+import { STATIC_PROJECTS } from '@/data/projects'
 
-// ── All projects for the Work listing page ─────────────────
+function toCard(p: Project): ProjectCard {
+  return {
+    id: p.id,
+    slug: p.slug,
+    sort_order: p.sort_order,
+    title: p.title,
+    tagline: p.tagline,
+    category: p.category,
+    tags: p.tags,
+    thumbnail_url: p.thumbnail_url,
+    hover_video_url: p.hover_video_url,
+    is_featured: p.is_featured,
+  }
+}
+
 export function useProjects(category?: string) {
-  const [projects, setProjects] = useState<ProjectCard[]>([])
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
-
-  useEffect(() => {
-    let cancelled = false
-
-    async function fetchProjects() {
-      setLoading(true)
-      setError(null)
-
-      let query = supabase
-        .from('projects')
-        .select('id, slug, sort_order, title, tagline, category, tags, thumbnail_url, hover_video_url, is_featured')
-        .eq('published', true)
-        .order('sort_order', { ascending: true })
-
-      if (category && category !== 'All') {
-        query = query.eq('category', category)
-      }
-
-      const { data, error: fetchError } = await query
-
-      if (!cancelled) {
-        if (fetchError) setError(fetchError.message)
-        else setProjects((data as ProjectCard[]) ?? [])
-        setLoading(false)
-      }
-    }
-
-    fetchProjects()
-    return () => { cancelled = true }
+  const projects = useMemo<ProjectCard[]>(() => {
+    const filtered = category && category !== 'All'
+      ? STATIC_PROJECTS.filter((p) => p.category === category && p.published)
+      : STATIC_PROJECTS.filter((p) => p.published)
+    return filtered
+      .sort((a, b) => a.sort_order - b.sort_order)
+      .map(toCard)
   }, [category])
 
-  return { projects, loading, error }
+  return { projects, loading: false, error: null }
 }
 
-// ── Single project for the detail page ────────────────────
 export function useProject(slug: string) {
-  const [project, setProject] = useState<Project | null>(null)
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
+  const project = useMemo<Project | null>(
+    () => STATIC_PROJECTS.find((p) => p.slug === slug && p.published) ?? null,
+    [slug],
+  )
 
-  useEffect(() => {
-    if (!slug) return
-    let cancelled = false
-
-    async function fetchProject() {
-      setLoading(true)
-      setError(null)
-
-      const { data, error: fetchError } = await supabase
-        .from('projects')
-        .select('*')
-        .eq('slug', slug)
-        .eq('published', true)
-        .single()
-
-      if (!cancelled) {
-        if (fetchError) setError(fetchError.message)
-        else setProject((data as Project) ?? null)
-        setLoading(false)
-      }
-    }
-
-    fetchProject()
-    return () => { cancelled = true }
-  }, [slug])
-
-  return { project, loading, error }
+  return { project, loading: false, error: null }
 }
 
-// ── Related projects (used at bottom of detail page) ──────
 export function useRelatedProjects(slugs: string[]) {
-  const [projects, setProjects] = useState<ProjectCard[]>([])
-
-  useEffect(() => {
-    if (!slugs.length) return
-    let cancelled = false
-
-    async function fetchRelated() {
-      const { data } = await supabase
-        .from('projects')
-        .select('id, slug, sort_order, title, tagline, category, tags, thumbnail_url, hover_video_url, is_featured')
-        .in('slug', slugs)
-        .eq('published', true)
-
-      if (!cancelled) setProjects((data as ProjectCard[]) ?? [])
-    }
-
-    fetchRelated()
-    return () => { cancelled = true }
-  }, [slugs.join(',')])  // eslint-disable-line react-hooks/exhaustive-deps
-
-  return projects
+  return useMemo<ProjectCard[]>(
+    () =>
+      STATIC_PROJECTS.filter((p) => slugs.includes(p.slug) && p.published).map(toCard),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [slugs.join(',')],
+  )
 }
 
-// ── All unique categories (for filter tabs on Work page) ──
 export function useCategories() {
-  const [categories, setCategories] = useState<string[]>([])
-
-  useEffect(() => {
-    async function fetchCategories() {
-      const { data } = await supabase
-        .from('projects')
-        .select('category')
-        .eq('published', true)
-
-      if (data) {
-        const unique = ['All', ...new Set(data.map((d: { category: string }) => d.category))]
-        setCategories(unique)
-      }
-    }
-
-    fetchCategories()
+  return useMemo<string[]>(() => {
+    const unique = [...new Set(STATIC_PROJECTS.filter((p) => p.published).map((p) => p.category))]
+    return ['All', ...unique]
   }, [])
-
-  return categories
 }
