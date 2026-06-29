@@ -1,0 +1,16 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(curl -s 'https://reinaerkdplzhgseqikt.supabase.co/rest/v1/projects?select=slug,title,category,published&order=sort_order.asc' -H 'apikey: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJlaW5hZXJrZHBsemhnc2VxaWt0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODIwNjQ2MjIsImV4cCI6MjA5NzY0MDYyMn0.v9ZBZ_FTPsukcYd5RS9w_XgdnGJg_vdGObH4xDARoQM' -H 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJlaW5hZXJrZHBsemhnc2VxaWt0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODIwNjQ2MjIsImV4cCI6MjA5NzY0MDYyMn0.v9ZBZ_FTPsukcYd5RS9w_XgdnGJg_vdGObH4xDARoQM')",
+      "Bash(sed -i '' 's/title=\"Orisa - Home11\"/title=\"STRATX - AI Marketing Studio\"/' src/pages/Home11Page.tsx)",
+      "Bash(sed -i '' 's/title=\"Orisa - About1\"/title=\"STRATX - About\"/' src/pages/About1Page.tsx)",
+      "Bash(sed -i '' 's/title=\"Orisa - Services1\"/title=\"STRATX - Services\"/' src/pages/Services1Page.tsx)",
+      "Bash(sed -i '' 's/title=\"Orisa - Contact1\"/title=\"STRATX - Contact\"/' src/pages/Contact1Page.tsx)",
+      "Bash(sed -i '' 's/title=\"Orisa - Faqs\"/title=\"STRATX - FAQs\"/' src/pages/FaqsPage.tsx)",
+      "Bash(git init *)",
+      "Bash(git add *)",
+      "mcp__7100d6f4-7ce2-49bf-ada8-590ed568b452__execute_sql",
+      "mcp__7100d6f4-7ce2-49bf-ada8-590ed568b452__list_tables"
+    ]
+  }
+}
